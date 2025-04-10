@@ -1,0 +1,15 @@
+{
+  "name": "sf-mcp-campaign-template",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "./node_modules/less/bin/lessc files/styles.less files/styles.css && ./compile-export-file.php | pbcopy && rm files/styles.css"
+  },
+  "devDependencies": {
+    "less": "^4.3.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  }
+}
