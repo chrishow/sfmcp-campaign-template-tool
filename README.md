@@ -34,3 +34,5 @@ You can now use the 'Import template from clipboard' button in the Campaign Temp
 There is some basic mocking of the sfMCP environment and tools in `src/salesforce-mocks.js`. I have only mocked the functions I need, if you need more, raise an issue. 
 
 Your input files go in the `sfMCP-files` directory. They should be named as in supplied files, the export tool will rename them to be the same filename as required by the import tool. 
+
+If your server-side classname isn't `MyCampaignTemplate` (it probably isn't if you've copied it from the visual editor), you will need to change the import and classname in `src/main.ts`. 
