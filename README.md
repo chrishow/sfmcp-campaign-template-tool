@@ -8,9 +8,10 @@ It allows you to develop Campaign Templates locally with `less` compilation and 
 ## Quick start
 
 1. Clone the repo: `git clone https://github.com/chrishow/sfmcp-campaign-template-tool.git`
-2. run `npm install`
-3. run `npm run dev`
-4. Open the vite link shown in your terminal in your browser
+2. `cd sfmcp-campaign-template-tool`
+3. run `npm install`
+4. run `npm run dev`
+5. Open the vite link shown in your terminal in your browser
 
 You can now edit the files in the 'files' directory and they will be compiled and hot-reloaded in your browser window. No more copying and pasting into the 'visual editor'. 
 
