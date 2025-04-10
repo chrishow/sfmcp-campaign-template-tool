@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-interface CampaignComponentContext {
+declare interface CampaignComponentContext {
     campaign: string;
     experience: string;
     userGroup: string;
@@ -8,15 +8,9 @@ interface CampaignComponentContext {
     // Add properties as needed
 }
 
-interface CampaignTemplateComponent {
+declare interface CampaignTemplateComponent {
     run(context: CampaignComponentContext): any;
 }
-
-// Decorator function declarations
-declare function header(label: string): PropertyDecorator;
-declare function title(label: string): PropertyDecorator;
-declare function subtitle(label: string): PropertyDecorator;
-declare function options(choices: Array<any>): PropertyDecorator;
 
 // Make all declarations global without using the 'global' block
 declare global {
