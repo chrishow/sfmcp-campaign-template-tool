@@ -36,7 +36,7 @@ Open the target page in your browser, and you can now either paste this code int
 })();
 ```
 
-Or use this bookmarklet link: <a href="javascript:(function()%7B(function()%20%7B%0A%20%20const%20scriptId%20%3D%20'mcp-vite-dev-script'%3B%0A%20%20%2F%2F%20Check%20if%20script%20already%20injected%20to%20prevent%20duplicates%20on%20manual%20re-runs%0A%20%20if%20(document.getElementById(scriptId))%20%7B%0A%20%20%20%20%20alert('Script%20already%20injected!')%3B%0A%20%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20script%20%3D%20document.createElement('script')%3B%0A%20%20script.id%20%3D%20scriptId%3B%0A%20%20script.type%20%3D%20'module'%3B%0A%20%20%2F%2F%20Make%20sure%20this%20matches%20your%20vite%20url!%0A%20%20script.src%20%3D%20'http%3A%2F%2Flocalhost%3A5173%2Fsrc%2Fmain.ts'%3B%20%0A%20%20document.body.appendChild(script)%3B%0A%20%20console.log('Injected%20Vite%20dev%20script%3A%20%2Fsrc%2Fmain.ts')%3B%0A%7D)()%3B%7D)()%3B">Inject</a>. You can drag this link to your bookmarks bar for easy access. 
+Or copy the code to this <a target='_blank' href='https://caiorss.github.io/bookmarklet-maker/'>bookmarklet maker</a> to create a bookmarklet that you can drag to your bookmarks bar for easy access. 
 
 You can now edit the files in the 'campaign' directory and they will be compiled and hot-reloaded in your browser window. No more copying and pasting into the 'visual editor'. 
 
