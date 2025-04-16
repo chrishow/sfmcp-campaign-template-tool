@@ -98,22 +98,19 @@ function runClientSideApply() {
  * Adds a minimal delay using setTimeout.
  * @param ms Milliseconds to delay (defaults to 0 for next event loop tick)
  */
-function delay(ms = 0): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+// function delay(ms = 0): Promise<void> {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+function delay(ms = 0): void {
+  return;
 }
 
 
 async function handleClientScriptHMRUpdate() {
-  console.log('HMR Handler: Starting update for client-side.js');
-
-  // 1. Run the OLD reset function first
+  // console.log('HMR Handler: Starting update for client-side.js');
   runClientSideReset();
 
-  // 2. Delay slightly to ensure DOM removal completes
-  await delay(50); // Keep delay, adjust if needed (e.g., 100ms)
-  console.log('HMR Handler: Delay after reset complete.');
-
-  // 3. Ensure mocks are ready for the script evaluation
+  // Ensure mocks are ready for the script evaluation
   currentClientSideApply = null; // Clear refs before eval
   currentClientSideReset = null;
   setupMockSalesforceInteractions();
@@ -133,15 +130,15 @@ async function handleClientScriptHMRUpdate() {
     const scriptContent = await response.text();
     console.log('HMR Handler: Fetched script content.');
 
-    // 5. Execute the new script content using eval
-    console.log('HMR Handler: Evaluating new client-side.js content...');
-    eval(scriptContent); // This should run the IIFE and call the mock registerTemplate (which just stores functions now)
-    console.log('HMR Handler: Evaluation complete.');
+    // Execute the new script content using eval
+    // console.log('HMR Handler: Evaluating new client-side.js content...');
+    eval(scriptContent); // This should run the IIFE and call the mock registerTemplate
+    // console.log('HMR Handler: Evaluation complete.');
 
-    // 6. Verify registration and EXPLICITLY CALL apply
+    // Verify registration and EXPLICITLY CALL apply
     if (typeof currentClientSideApply === 'function') {
       console.log("HMR Handler: Apply function registered successfully via eval. Explicitly calling it now...");
-      runClientSideApply(); // <-- Explicitly trigger apply HERE
+      runClientSideApply();
     } else {
       // If this happens, the eval or the script itself failed before calling registerTemplate
       console.error("HMR Handler: FAILED to register apply function after eval.");
@@ -158,34 +155,25 @@ async function handleClientScriptHMRUpdate() {
  * Called initially and ONLY when client-side.js itself changes.
  */
 async function loadOrReloadClientScript() {
-  console.log('loadOrReloadClientScript called (using import for initial load).');
-
-  // --- Run Reset ---
   runClientSideReset(); // Run reset (no-op first time, cleans up on subsequent calls if needed)
 
-  // --- Add Delay ---
-  await delay(50); // Keep delay
-  console.log('Delay after reset complete.');
-
-  // --- Clear state and Setup Mocks ---
   currentClientSideApply = null;
   currentClientSideReset = null;
+
   setupMockSalesforceInteractions();
-  // Use the mock that defers Apply execution
+
   setupMockRegisterTemplate(); // Mock is ready, but won't auto-run apply
 
   // --- Import ---
-  console.log('Initial Load: Dynamically importing client-side.js...');
+  // console.log('Initial Load: Dynamically importing client-side.js...');
   try {
     // @ts-ignore TS2306
     await import('./campaign/client-side.js');
-    console.log('Initial Load: client-side.js import awaited.');
+    // console.log('Initial Load: client-side.js import awaited.');
 
-    // --- Check Registration & EXPLICITLY RUN APPLY ---
-    // This now applies to the initial load path as well
     if (typeof currentClientSideApply === 'function') {
-      console.log("Initial Load: Apply function registered successfully. Explicitly calling it now...");
-      runClientSideApply(); // <-- EXPLICITLY CALL APPLY HERE
+      // console.log("Initial Load: Apply function registered successfully. Explicitly calling it now...");
+      runClientSideApply();
     } else {
       // This error means the IIFE didn't run or call registerTemplate correctly on initial load
       console.error("Initial Load: FAILED to register apply function after import.");
@@ -212,9 +200,6 @@ if (import.meta.hot) {
 
       // Reset using the currently loaded script's reset function
       runClientSideReset();
-      // Delay slightly to ensure DOM removal completes
-      await delay(50); // Using 50ms, adjust if needed
-      console.log('HMR (template): Delay after reset complete.');
       // Apply using the currently loaded script's apply function (with new template fn)
       runClientSideApply();
     } else {
@@ -224,16 +209,11 @@ if (import.meta.hot) {
 
   // HMR for Virtual Campaign Data
   import.meta.hot.on('campaign-data-update', async (newData: CampaignDataType) => { // Marked as async for await delay
-    console.log('>>> HMR HANDLER: campaign-data-update <<<'); // Add identifier
-    console.log('HMR: Received campaign-data-update');
     if (newData && JSON.stringify(newData) !== JSON.stringify(currentData)) {
       currentData = newData; // Update data
 
       // Reset using the currently loaded script's reset function
       runClientSideReset();
-      // Delay slightly to ensure DOM removal completes
-      await delay(50); // Using 50ms, adjust if needed
-      console.log('HMR (data): Delay after reset complete.');
       // Apply using the currently loaded script's apply function (with new data)
       runClientSideApply();
     } else {
@@ -243,13 +223,11 @@ if (import.meta.hot) {
 
   // HMR for Client-side JS (Simplified Handler)
   import.meta.hot.accept('./campaign/client-side.js', () => { // Pass the handler directly
-    console.log('>>> HMR HANDLER: client-side.js <<<'); // Add identifier
     handleClientScriptHMRUpdate();
   });
 
   // HMR Dispose - Final Cleanup
   import.meta.hot.dispose(() => {
-    console.log('HMR: Disposing module...');
     // Attempt cleanup using the last known reset function
     runClientSideReset();
 
@@ -257,7 +235,7 @@ if (import.meta.hot) {
     cleanupMockSalesforceInteractions();
     if ((window as any).registerTemplate) {
       delete (window as any).registerTemplate;
-      console.log('Mock registerTemplate removed from window.');
+      // console.log('Mock registerTemplate removed from window.');
     }
     currentClientSideApply = null;
     currentClientSideReset = null;
