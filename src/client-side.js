@@ -1,49 +1,55 @@
-// Example - use your actual logic
-console.log("Client-side script loaded for SFMC template.");
+(function () {
 
-function handleButtonClick() {
-   const widget = document.querySelector('#sfmc-widget-container .my-widget');
-   const emailInput = widget?.querySelector('input[type="email"]');
-   if (emailInput) {
-       alert(`Simulating signup for: ${emailInput.value}`);
-   }
-   // In real scenario, interact with Evergage/Personalization SDK
-   // Maybe pass interactionName via data attribute or global scope?
-   // Evergage.sendEvent({ name: widget.dataset.interactionName, ... })
-}
 
-// Export setup and cleanup functions
-export function init(context) { // context can pass mock data if needed
-  console.log("Initializing client-side script...");
-  const widget = document.querySelector('#sfmc-widget-container .my-widget'); // Ensure selector is specific
-  if (!widget) {
-    console.error("Widget container not found for init");
-    return;
+  function setupButton() {
+    const button = document.querySelector('#sfmc-widget-container button');
+    console.log('button', button);
+
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      alert('button clicked!');
+    });
+
   }
 
-  // Add interaction name as data attribute for potential use
-  if (context?.interactionName) {
-      widget.dataset.interactionName = context.interactionName;
+  function apply(context, template) {
+    // 1. Call the compiled template function to get the HTML STRING
+    const htmlString = template(context);
+
+    // 2. Create a container element
+    const container = document.createElement('div');
+    container.id = 'sfmc-widget-container'; // Make sure it has the ID reset expects
+
+    // 3. Set the innerHTML of the container using the string
+    container.innerHTML = htmlString;
+
+    // 4. Append the CONTAINER element to the body
+    document.body.appendChild(container); // Appending the DIV element now
+
+    // 5. DEFER Setup listeners targeting elements WITHIN the new container
+    console.log('DOM appended. Deferring setupButton slightly.');
+    // Use setTimeout with 0 delay to push execution to the end of the current event loop cycle
+    setTimeout(() => {
+      console.log('Executing deferred setupButton.');
+      setupButton();
+    }, 0);
   }
 
-  const button = widget.querySelector('button');
-  if (button) {
-    // Remove previous listener before adding a new one for HMR safety
-    button.removeEventListener('click', handleButtonClick);
-    button.addEventListener('click', handleButtonClick);
+
+  function reset(context, template) {
+    // remove the widget
+    console.error('client-side.js: reset function called.');
+    document.querySelector('#sfmc-widget-container').remove();
   }
-}
 
-export function cleanup() {
-   console.log("Cleaning up client-side script...");
-   const widget = document.querySelector('#sfmc-widget-container .my-widget');
-   const button = widget?.querySelector('button');
-   if (button) {
-       button.removeEventListener('click', handleButtonClick);
-   }
-}
+  function control(context) {
+    // We don't need to implement this
+  }
 
-// --- Important ---
-// Remove auto-execution based on DOMContentLoaded here,
-// let main.ts control the execution via exported init.
-// if (document.readyState === 'loading') { ... } else { ... } // REMOVE THIS
+  registerTemplate({
+    apply: apply,
+    reset: reset,
+    control: control
+  });
+
+})();

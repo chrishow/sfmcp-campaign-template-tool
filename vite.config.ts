@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { campaignDataPlugin } from './vite-plugin-campaign-data'; // Adjust path if needed
-import * as path from 'path'; // Needed if using __dirname in plugin path
+// import * as path from 'path'; // Needed if using __dirname in plugin path
 
 // https://vitejs.dev/config/
 export default defineConfig({
