@@ -9,7 +9,7 @@ const resolvedVirtualModuleId = '\0' + virtualModuleId; // Convention for virtua
 
 export function campaignDataPlugin(): PluginOption {
     // Resolve the absolute path to the component file relative to the plugin file's location
-    const componentPath = path.resolve(__dirname, 'src/campaign/server-side.ts'); // Updated path
+    const componentPath = path.resolve(__dirname, 'campaign/server-side.ts'); // Updated path
 
     function extractData() {
         console.log(`Reading component data from: ${componentPath}`);

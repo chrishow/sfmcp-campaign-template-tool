@@ -1,7 +1,7 @@
 // src/main.ts
-import './campaign/styles.less'; // Use .css or .less depending on your actual file
+import '../campaign/styles.less'; // Use .css or .less depending on your actual file
 import Handlebars from 'handlebars';
-import templateString from './campaign/template.hbs?raw';
+import templateString from '../campaign/template.hbs?raw';
 import { campaignData } from 'virtual:campaign-data';
 import { setupMockSalesforceInteractions, cleanupMockSalesforceInteractions } from './sfmc-mocks';
 
@@ -101,7 +101,7 @@ async function initialLoadClientScript(): Promise<void> {
   // console.log('Initial Load: Dynamically importing client-side.js...');
   try {
     // @ts-ignore TS2306 - Ignore editor error for importing non-module IIFE script
-    await import('./campaign/client-side.js');
+    await import('../campaign/client-side.js');
     // console.log('Initial Load: client-side.js import awaited.');
 
     // Check if registration worked and explicitly run apply
@@ -134,7 +134,7 @@ async function handleClientScriptHMRUpdate(): Promise<void> {
 
   // 3. Fetch the updated script content using an ABSOLUTE URL w/ cache busting
   const viteOrigin = new URL(import.meta.url).origin;
-  const scriptPath = '/src/campaign/client-side.js'; // Path relative to Vite root
+  const scriptPath = '/campaign/client-side.js'; // Path relative to Vite root
   const scriptUrl = `${viteOrigin}${scriptPath}?t=${Date.now()}`;
 
   console.log(`HMR Handler: Fetching ${scriptUrl}...`);
@@ -171,7 +171,7 @@ if (import.meta.hot) {
   console.log('HMR enabled.');
 
   // HMR for Handlebars template
-  import.meta.hot.accept('./campaign/template.hbs?raw', (newModule) => {
+  import.meta.hot.accept('../campaign/template.hbs?raw', (newModule) => {
     if (!newModule) return;
     console.log('HMR: template.hbs updated.');
     // Recompile template
@@ -197,7 +197,7 @@ if (import.meta.hot) {
   });
 
   // HMR for Client-side JS (uses fetch/eval handler)
-  import.meta.hot.accept('./campaign/client-side.js', handleClientScriptHMRUpdate);
+  import.meta.hot.accept('../campaign/client-side.js', handleClientScriptHMRUpdate);
 
   // HMR Dispose - Cleanup
   import.meta.hot.dispose(() => {
