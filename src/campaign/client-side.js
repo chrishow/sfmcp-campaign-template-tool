@@ -48,7 +48,6 @@
             submitButton.setAttribute('disabled', 'true');
 
             doFormSubmit();
-
         });
 
         // Manage dismissal
@@ -69,14 +68,12 @@
             });
         }
 
-
+        // console.log("###########Form setup complete.");
     }
 
     // src/campaign/client-side.js
     function apply(context, template) {
         console.log("client-side.js: apply executed");
-
-        // REMOVE check from here
 
         const html = template(context);
         // Use cashDom mock for consistency if desired, or stick to direct append
