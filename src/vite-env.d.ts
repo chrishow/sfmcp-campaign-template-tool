@@ -2,7 +2,7 @@
 
 declare module 'virtual:campaign-data' {
     /**
-     * Represents the data extracted from campaign-template-component.ts
+     * Represents the data extracted from server-side.ts
      * Keys are property names, values are their initial values (string, number, boolean).
      */
     export const campaignData: Record<string, string | number | boolean | any>; // Using 'any' is simplest, or be more specific

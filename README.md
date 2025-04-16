@@ -23,7 +23,8 @@ Open the target page in your browser, and you can now either paste this code int
   const scriptId = 'mcp-vite-dev-script';
   // Check if script already injected to prevent duplicates on manual re-runs
   if (document.getElementById(scriptId)) {
-     document.getElementById(scriptId).remove();
+     alert('Script already injected!');
+     return;
   }
   const script = document.createElement('script');
   script.id = scriptId;
@@ -35,7 +36,7 @@ Open the target page in your browser, and you can now either paste this code int
 })();
 ```
 
-Or use this bookmarklet link: <a href="javascript:(function()%7B(function()%20%7B%0A%20%20const%20scriptId%20%3D%20'mcp-vite-dev-script'%3B%0A%20%20%2F%2F%20Check%20if%20script%20already%20injected%20to%20prevent%20duplicates%20on%20manual%20re-runs%0A%20%20if%20(document.getElementById(scriptId))%20%7B%0A%20%20%20%20%20document.getElementById(scriptId).remove()%3B%0A%20%20%7D%0A%20%20const%20script%20%3D%20document.createElement('script')%3B%0A%20%20script.id%20%3D%20scriptId%3B%0A%20%20script.type%20%3D%20'module'%3B%0A%20%20%2F%2F%20Make%20sure%20this%20matches%20your%20vite%20url!%0A%20%20script.src%20%3D%20'http%3A%2F%2Flocalhost%3A5173%2Fsrc%2Fmain.ts'%3B%20%0A%20%20document.body.appendChild(script)%3B%0A%20%20console.log('Injected%20Vite%20dev%20script%3A%20%2Fsrc%2Fmain.ts')%3B%0A%7D)()%3B%7D)()%3B">inject</a>. You can drag this link to your bookmarks bar for easy access. 
+Or use this bookmarklet link: <a href="javascript:(function()%7B(function()%20%7B%0A%20%20const%20scriptId%20%3D%20'mcp-vite-dev-script'%3B%0A%20%20%2F%2F%20Check%20if%20script%20already%20injected%20to%20prevent%20duplicates%20on%20manual%20re-runs%0A%20%20if%20(document.getElementById(scriptId))%20%7B%0A%20%20%20%20%20alert('Script%20already%20injected!')%3B%0A%20%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20script%20%3D%20document.createElement('script')%3B%0A%20%20script.id%20%3D%20scriptId%3B%0A%20%20script.type%20%3D%20'module'%3B%0A%20%20%2F%2F%20Make%20sure%20this%20matches%20your%20vite%20url!%0A%20%20script.src%20%3D%20'http%3A%2F%2Flocalhost%3A5173%2Fsrc%2Fmain.ts'%3B%20%0A%20%20document.body.appendChild(script)%3B%0A%20%20console.log('Injected%20Vite%20dev%20script%3A%20%2Fsrc%2Fmain.ts')%3B%0A%7D)()%3B%7D)()%3B">Inject</a>. You can drag this link to your bookmarks bar for easy access. 
 
 You can now edit the files in the 'campaign' directory and they will be compiled and hot-reloaded in your browser window. No more copying and pasting into the 'visual editor'. 
 
@@ -56,29 +57,6 @@ Use the supplied `npm run build` script which does the following:
 You can now use the 'Import template from clipboard' button in the Campaign Template visual editor. 
 
 ## Extra info
-There is some basic mocking of the sfMCP environment and tools in `src/salesforce-mocks.js`. I have only mocked the functions I need, if you need more, raise an issue. 
+There is some basic mocking of the sfMCP environment and tools in `src/sfmc-mocks.js`. I have only mocked the functions I need, if you need more, raise an issue. 
 
 Your input files go in the `campaign` directory. They should be named as in supplied files, the export tool will rename them to be the same filename as required by the import tool. 
-
-If your server-side classname isn't `MyCampaignTemplate` (it probably isn't if you've copied it from the visual editor), you will need to change the import and classname in `src/main.ts`. 
-
-
-
-## Insert script into live page:
-
-```
-(function() {
-  const scriptId = 'mcp-vite-dev-script';
-  // Check if script already injected to prevent duplicates on manual re-runs
-  if (document.getElementById(scriptId)) {
-     document.getElementById(scriptId).remove();
-  }
-  const script = document.createElement('script');
-  script.id = scriptId;
-  script.type = 'module';
-  // Make sure this matches your vite url!
-  script.src = 'http://localhost:5173/src/main.ts'; 
-  document.body.appendChild(script);
-  console.log('Injected Vite dev script: /src/main.ts');
-})();
-```
