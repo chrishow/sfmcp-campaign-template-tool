@@ -26,7 +26,7 @@ $data->public = false;
 $data->files = new stdClass();
 
 foreach($files as $filename => $file) {
-    $filePath = __DIR__ . '/src/campaign/' . $file;
+    $filePath = __DIR__ . '/campaign/' . $file;
     if (!file_exists($filePath)) {
         echo "File not found: $filePath\n";
         continue;

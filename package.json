@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "./node_modules/less/bin/lessc src/campaign/styles.less src/campaign/styles.css && ./compile-export-file.php | pbcopy && rm src/campaign/styles.css",
+    "build": "./node_modules/less/bin/lessc campaign/styles.less campaign/styles.css && ./compile-export-file.php | pbcopy && rm campaign/styles.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -3,7 +3,7 @@
 
 This tool massively speeds up development of Salesforce Marketing Cloud Personalization (sfMCP) Campaign Templates.
 
-It allows you to develop Campaign Templates locally with `less` compilation and hot module reload. 
+It allows you to develop Campaign Templates locally with `less` compilation and hot module reload, while injected into the live target page.
 
 ## Quick start
 
