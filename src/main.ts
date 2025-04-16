@@ -1,7 +1,7 @@
 // src/main.ts
-import './styles.less';
+import './campaign/styles.less';
 import Handlebars from 'handlebars';
-import templateString from './template.hbs?raw';
+import templateString from './campaign/template.hbs?raw';
 import { campaignData } from 'virtual:campaign-data';
 
 // Import the mock setup and cleanup functions
@@ -130,7 +130,7 @@ async function loadOrReloadClientScript() {
     // Import the script. It will execute its IIFE, call registerTemplate,
     // which the mock captures, storing the NEW apply/reset and running the NEW apply.
     // @ts-ignore TS2306 - Suppressing spurious module error for non-module IIFE script
-    await import('./client-side.js');
+    await import('./campaign/client-side.js');
     console.log('client-side.js imported and executed.');
   } catch (error) {
     console.error('Failed to load or execute client-side.js:', error);
@@ -147,7 +147,7 @@ if (import.meta.hot) {
   console.log('HMR enabled (client-side renders/resets)');
 
   // HMR for Handlebars template
-  import.meta.hot.accept('./template.hbs?raw', (newModule) => {
+  import.meta.hot.accept('./campaign/template.hbs?raw', (newModule) => {
     if (newModule) {
       console.log('HMR: template.hbs updated');
       // Recompile and store the new template function
@@ -176,7 +176,7 @@ if (import.meta.hot) {
   });
 
   // HMR for Client-side JS
-  import.meta.hot.accept('./client-side.js', async () => {
+  import.meta.hot.accept('./campaign/client-side.js', async () => {
     console.log('HMR: client-side.js updated');
     // This requires reloading the script entirely.
     // loadOrReloadClientScript handles calling the OLD reset before loading the NEW script.
