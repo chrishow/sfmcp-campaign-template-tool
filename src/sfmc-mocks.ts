@@ -38,7 +38,7 @@ export function setupMockSalesforceInteractions() {
 
                     // *** Add Verification Log Immediately After Removal Attempt ***
                     const elementsAfterRemove = Array.from(document.querySelectorAll(selector));
-                    console.log(`SFMC MOCK: Verification - Elements found for "${selector}" immediately after remove call: ${elementsAfterRemove.length}`);
+                    // console.log(`SFMC MOCK: Verification - Elements found for "${selector}" immediately after remove call: ${elementsAfterRemove.length}`);
 
                 } else {
                     console.warn(`SFMC MOCK: cashDom("${selector}").remove(): No elements found to remove.`);
@@ -76,14 +76,14 @@ export function setupMockSalesforceInteractions() {
 
     (window as any).buildBindId = mockBuildBindId;
 
-    console.log('Mock SalesforceInteractions setup complete.');
+    // console.log('Mock SalesforceInteractions setup complete.');
 }
 
 /**
  * Cleans up the mock objects from the window global scope.
  */
 export function cleanupMockSalesforceInteractions() {
-    console.log('Cleaning up mock SalesforceInteractions from window...');
+    // console.log('Cleaning up mock SalesforceInteractions from window...');
     let cleaned = false;
     if ((window as any).SalesforceInteractions) {
         delete (window as any).SalesforceInteractions;

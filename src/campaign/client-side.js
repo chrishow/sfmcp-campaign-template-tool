@@ -67,23 +67,19 @@
                 link.setAttribute('target', '_blank');
             });
         }
-
-        // console.log("###########Form setup complete.");
     }
 
-    // src/campaign/client-side.js
     function apply(context, template) {
         const html = template(context);
         SalesforceInteractions.cashDom("body").append(html);
         console.log("##client-side.js: HTML appended to body.");
 
-        setupForm()
+        setupForm();
     }
 
     function reset(context, template) {
         SalesforceInteractions.DisplayUtils.unbind(buildBindId(context));
         SalesforceInteractions.cashDom(".mcp-2025-04-09-popup").remove();
-        console.log('Removing popup');
     }
 
     function control(context) {
@@ -95,7 +91,6 @@
         //         return true;
         //     });
     }
-    console.log("Client-side.js: >>> Reached point just before registerTemplate call <<<"); // <-- ADD THIS LOG
 
     registerTemplate({
         apply: apply,
