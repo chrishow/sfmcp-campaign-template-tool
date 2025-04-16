@@ -1,8 +1,11 @@
 // src/main.ts
-import './styles.css';
+import './styles.less';
 import Handlebars from 'handlebars';
 import templateString from './template.hbs?raw';
 import { campaignData } from 'virtual:campaign-data';
+
+// Import the mock setup and cleanup functions
+import { setupMockSalesforceInteractions, cleanupMockSalesforceInteractions } from './sfmc-mocks'; // <-- IMPORT
 
 type CampaignDataType = typeof campaignData;
 // Type for the compiled Handlebars template function
@@ -56,7 +59,7 @@ function setupMockRegisterTemplate() {
       console.warn('client-side.js did not provide a valid apply function.');
     }
 
-    if (currentClientSideReset) {
+    if (typeof currentClientSideReset === 'function') {
       console.log('Stored client-side reset function.');
     }
     // Ignore control
@@ -67,7 +70,7 @@ function setupMockRegisterTemplate() {
  * Executes the stored client-side reset function, if available.
  */
 function runClientSideReset() {
-  if (currentClientSideReset) {
+  if (typeof currentClientSideReset === 'function') {
     console.log('Executing client-side reset function...');
     try {
       // Pass context, template arg is likely ignored by reset
@@ -119,18 +122,20 @@ async function loadOrReloadClientScript() {
   currentClientSideReset = null;
 
   // Ensure mock is ready BEFORE importing the new script
+  setupMockSalesforceInteractions();
   setupMockRegisterTemplate();
 
   console.log('Dynamically importing client-side.js...');
   try {
     // Import the script. It will execute its IIFE, call registerTemplate,
     // which the mock captures, storing the NEW apply/reset and running the NEW apply.
+    // @ts-ignore TS2306 - Suppressing spurious module error for non-module IIFE script
     await import('./client-side.js');
     console.log('client-side.js imported and executed.');
   } catch (error) {
     console.error('Failed to load or execute client-side.js:', error);
     // Maybe add a visual indicator on the page?
-    // document.body.insertAdjacentHTML('beforeend', '<p style="color: red; position: fixed; bottom: 0; right: 0; background: white; border: 1px solid red; padding: 5px; z-index: 10000;">Error loading client script!</p>');
+    document.body.insertAdjacentHTML('beforeend', '<p style="color: red; position: fixed; bottom: 0; right: 0; background: white; border: 1px solid red; padding: 5px; z-index: 10000;">Error loading client script!</p>');
   }
 }
 

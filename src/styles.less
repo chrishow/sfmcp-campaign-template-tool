@@ -1,0 +1,157 @@
+:root {
+    --mcp-font: "Advent Pro";
+}
+
+
+
+.mcp-2025-04-09-popup {
+    font-family: var(--mcp-font);
+
+    &,
+    * {
+        box-sizing: border-box;
+    }
+
+
+    .mcp-overlay {
+        position: fixed;
+        display: block;
+        z-index: 9998;
+        overflow-y: auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: .3;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+    }
+
+    .mcp-container,
+    .mcp-thank-you {
+        transition: opacity 0.5s ease-in-out;
+
+        opacity: 1;
+        overflow: hidden;
+        border-radius: 14px;
+        position: fixed;
+        z-index: 9999;
+        top: 50%;
+        left: 50%;
+        width: calc(100% - 40px);
+        transform: translateX(-50%) translateY(-50%);
+        background-color: white;
+        max-width: 780px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        >div:first-child,
+        >form {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .image {
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                margin: 0 auto;
+                display: block;
+                object-fit: cover;
+            }
+        }
+
+        .dismiss-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        .small {
+            font-size: 10px;
+            font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            text-align: left;
+            line-height: 1.75;
+        }
+    }
+
+    h1 {
+        font-weight: 500;
+        font-size: 30px;
+        line-height: 36px;
+    }
+
+    h2 {
+        font-weight: 400;
+        font-size: 18px;
+        text-transform: none;
+
+        b {
+            font-weight: 700;
+        }
+    }
+
+    input:not([type="submit"]) {
+        font-family: var(--mcp-font);
+        width: 100%;
+        height: 50px;
+        padding-left: 1em;
+        margin-bottom: 0.75em;
+        font-weight: 700;
+        font-size: 16px;
+        // border-radius: 6px;
+        border: 1px black solid;
+
+        &:focus-visible {
+            outline-width: 2px;
+            outline-style: auto;
+            outline-color: #000000;
+            outline-offset: 0;
+        }
+    }
+
+    input[type=submit] {
+        margin-top: 2px;
+        width: 100%;
+
+        &[disabled="true"] {
+            background-color: #ccc;
+            cursor: wait;
+        }
+
+    }
+
+
+    .mcp-thank-you {
+        display: none;
+        align-items: center;
+        font-size: 20px;
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+        }
+    }
+
+    &.show-thank-you {
+        .mcp-thank-you {
+            display: grid;
+        }
+
+        .mcp-container {
+            opacity: 0;
+        }
+    }
+
+    &.hide-form {
+        .mcp-container {
+            display: none;
+        }
+    }
+
+
+    @media only screen and (max-width: 600px) {}
+}

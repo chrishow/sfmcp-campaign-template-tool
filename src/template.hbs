@@ -1,10 +1,30 @@
-{{! Example - use your actual template }}
-<div class="my-widget">
-  <img src="{{imageUrl}}" alt="Campaign Image" class="widget-image">
-  <h2>{{formHeader}}</h2>
-  <div>{{{formSubheader}}}</div>
-  <input type="email" placeholder="Enter your email">
-  <button>{{formButtonText}}</button>
-  <div class="small-copy">{{{formSmallCopy}}}</div>
+<div class="mcp-2025-04-09-popup" data-interaction-name="{{ interactionName }}">
+    <div class="mcp-overlay"></div>
+
+    <div class="mcp-thank-you">
+    <div>
+        <h1>{{thankYouHeader}}</h1>
+        <p>
+        {{{thankYouCopy}}}
+        </p>
+    </div>
+    <div class="image"><img src="{{ thankYouImageUrl }}" alt></div>
+    <svg class='dismiss-btn' role="button" width="35" height="35" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="needsclick  kl-private-reset-css-Xuajs1"><title id="title-Close-dialog">Close dialog</title><circle cx="10" cy="10" r="9.5" fill="rgba(255,255,255,1)" stroke="rgba(255,255,255,0)" style="cursor: pointer;"></circle><path d="M6 6L14 14M6 14L14 6L6 14Z" stroke="#373F47" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;"></path></svg>
+    </div>
+        
+    <div class="mcp-container">
+    <form class="mcp-form">
+        <h1>{{formHeader}}</h1>
+        <h2>{{{formSubheader}}}</h2>
+        <input type="email" name="emailAddress" placeholder="E-Mail" required />
+        <input type="text" name="firstName" placeholder="Vorname" />
+        <input class="button button--filled button--uppercase" type="submit" value="{{ formButtonText }}" />
+        <p class="small">
+        {{{formSmallCopy}}}
+        </p>
+    </form>
+    <div class="image"><img src="{{ imageUrl }}" alt></div>
+    <svg class='dismiss-btn' role="button" width="35" height="35" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="needsclick  kl-private-reset-css-Xuajs1"><title id="title-Close-dialog">Close dialog</title><circle cx="10" cy="10" r="9.5" fill="rgba(255,255,255,1)" stroke="rgba(255,255,255,0)" style="cursor: pointer;"></circle><path d="M6 6L14 14M6 14L14 6L6 14Z" stroke="#373F47" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;"></path></svg>
+    </div>
+
 </div>
-{{! Add elements for the 'thank you' state if needed }}

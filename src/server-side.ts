@@ -11,7 +11,7 @@ export class MyCampaignTemplate implements CampaignTemplateComponent {
     @title("Form Image URL")
     imageUrl: string = "https://4711.com/cdn/shop/files/4711_AcquaColonia_Intense_Floral_Fields_Moodbild_07_1.jpg?v=1710839625"
 
-    formHeader: string = "ABONNIERE JETZT UNSEREN 4711 NEWSLETTER"
+    formHeader: string = "ABONNIERE JETZT UNSEREN 4711 NEWSLETTER!"
 
     @richText(true)
     formSubheader: string = "& Erhalte einen 11%-Rabattcode für Deine nächste Bestellung!"
