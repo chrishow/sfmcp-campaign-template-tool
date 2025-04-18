@@ -47,10 +47,9 @@ Once you have finished editing your files locally, you need to upload them to sf
 
 Use the supplied `npm run build` script which does the following:
 
-1. Compiles `campaign/styles.less` to `campaign/styles.css`
+1. Compiles `campaign/styles.less`
 2. Builds a json export file suitable for import into the visual editor
 3. Copies the json into the (Mac) clipboard with `pbcopy`
-3. Deletes the `campaign/styles.css` file
 
 (If you are not using `less` or a Mac, you will want to modify this.)
 
