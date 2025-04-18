@@ -23,14 +23,11 @@ let currentClientSideReset: ClientSideFunction = null;
  */
 function runClientSideReset(): void {
   if (typeof currentClientSideReset === 'function') {
-    // console.log('Executing client-side reset function...');
     try {
       currentClientSideReset(currentData, null); // Pass context, template arg likely ignored
     } catch (error) {
       console.error('Error executing client-side reset function:', error);
     }
-  } else {
-    // console.log('No client-side reset function available to run.');
   }
 }
 
@@ -39,13 +36,11 @@ function runClientSideReset(): void {
  */
 function runClientSideApply(): void {
   if (typeof currentClientSideApply === 'function') {
-    // console.log('Executing client-side apply function...');
     try {
       // Pass current data and the current compiled template function
       currentClientSideApply(currentData, currentCompiledTemplateFn);
     } catch (error) {
       console.error('Error executing client-side apply function:', error);
-      // Add hints for common errors if needed
     }
   } else {
     console.log('No client-side apply function available to run (was it registered?).');
@@ -57,7 +52,6 @@ function runClientSideApply(): void {
  * This version defers the execution of 'apply'.
  */
 function setupMockRegisterTemplate(): void {
-  // console.log('Setting up mock window.registerTemplate (Deferring apply execution)');
   type TemplateDefinition = {
     apply: (context: CampaignDataType, templateFn: CompiledTemplateFn) => void;
     reset: (context: CampaignDataType, template?: any) => void;
@@ -65,18 +59,12 @@ function setupMockRegisterTemplate(): void {
   };
 
   (window as any).registerTemplate = (definition: TemplateDefinition) => {
-    // console.log('Mock registerTemplate called by client script.');
     // Store the functions provided by the script
     currentClientSideApply = definition.apply;
     currentClientSideReset = definition.reset;
 
-    if (typeof currentClientSideApply === 'function') {
-      // console.log("Apply function registered by client script, execution deferred.");
-    } else {
+    if (typeof currentClientSideApply !== 'function') {
       console.warn("Client script did not provide a valid Apply function during registration.");
-    }
-    if (typeof currentClientSideReset === 'function') {
-      // console.log('Reset function registered by client script.');
     }
   };
 }
@@ -86,7 +74,6 @@ function setupMockRegisterTemplate(): void {
  * Assumes the imported script's IIFE will call registerTemplate.
  */
 async function initialLoadClientScript(): Promise<void> {
-  // console.log('Initial Load: Starting...');
   // Reset is run first (no-op typically, but good practice)
   runClientSideReset();
 
@@ -98,15 +85,12 @@ async function initialLoadClientScript(): Promise<void> {
   setupMockSalesforceInteractions();
   setupMockRegisterTemplate(); // Version that defers apply execution
 
-  // console.log('Initial Load: Dynamically importing client-side.js...');
   try {
     // @ts-ignore TS2306 - Ignore editor error for importing non-module IIFE script
     await import('../campaign/client-side.js');
-    // console.log('Initial Load: client-side.js import awaited.');
 
     // Check if registration worked and explicitly run apply
     if (typeof currentClientSideApply === 'function') {
-      // console.log("Initial Load: Apply function registered. Explicitly calling it now...");
       runClientSideApply(); // Explicitly trigger apply
     } else {
       console.error("Initial Load: FAILED to register apply function after import. IIFE likely didn't run or registerTemplate failed.");
@@ -142,16 +126,12 @@ async function handleClientScriptHMRUpdate(): Promise<void> {
     const response = await fetch(scriptUrl);
     if (!response.ok) throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
     const scriptContent = await response.text();
-    // console.log('HMR Handler: Fetched script content.');
 
     // 4. Evaluate the fetched script content (IIFE)
-    // console.log('HMR Handler: Evaluating new client-side.js content...');
     eval(scriptContent); // Runs IIFE -> calls registerTemplate -> stores functions
-    // console.log('HMR Handler: Evaluation complete.');
 
     // 5. Verify registration and explicitly call apply
     if (typeof currentClientSideApply === 'function') {
-      // console.log("HMR Handler: Apply function registered successfully via eval. Explicitly calling it now...");
       runClientSideApply(); // Explicitly trigger apply
     } else {
       console.error("HMR Handler: FAILED to register apply function after eval.");
