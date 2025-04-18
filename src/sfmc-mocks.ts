@@ -1,28 +1,29 @@
-// src/sfmc-mocks.ts
-
 /**
- * Sets up mock implementations for SalesforceInteractions and related globals.
+ * Sets up mock implementations for SalesforceInteractions and related globals
+ * needed for local development and testing outside the SFMC environment.
  */
 export function setupMockSalesforceInteractions() {
-    console.log('Setting up mock SalesforceInteractions from sfmc-mocks.ts...');
 
     // --- Mock Implementations ---
 
-    // src/sfmc-mocks.ts
-
-    const mockCashDom = (selector: string | Element) => { // Allow Element as input too, though likely string now
+    /**
+     * Mock implementation of SalesforceInteractions.cashDom (similar to jQuery/cash-dom).
+     * @param selector - A CSS selector string or an existing Element.
+     */
+    const mockCashDom = (selector: string | Element) => {
         let elements: Element[] = [];
-        let selectorString: string = '';
+        let selectorString: string = ''; // For logging/warning purposes
 
-        // Determine if input is selector string or element
         if (typeof selector === 'string') {
             selectorString = selector;
-            console.log(`SFMC MOCK: cashDom("${selectorString}") called.`);
-            elements = Array.from(document.querySelectorAll(selectorString));
+            try {
+                elements = Array.from(document.querySelectorAll(selectorString));
+            } catch (e) {
+                console.error(`SFMC MOCK: cashDom failed to query selector "${selectorString}":`, e);
+                elements = []; // Ensure elements is empty on error
+            }
         } else if (selector instanceof Element) {
-            // If an element is passed directly (less likely with current pageElementLoaded mock)
             selectorString = `Passed Element <${selector.tagName}>`;
-            console.log(`SFMC MOCK: cashDom(Element) called with:`, selector);
             elements = [selector]; // Treat the passed element as the collection
         } else {
             console.error(`SFMC MOCK: cashDom called with invalid type:`, selector);
@@ -30,95 +31,76 @@ export function setupMockSalesforceInteractions() {
             elements = [];
         }
 
-        console.log(`SFMC MOCK: cashDom processing ${elements.length} element(s) for selector/element "${selectorString}".`);
-
+        // Return the mock cashDom object
         return {
-            elements: elements, // Expose the found elements
+            elements: elements, // Expose the found elements if needed externally
             length: elements.length,
 
+            /** Appends HTML to the first element in the collection. */
             append: (htmlString: string) => {
-                console.log(`SFMC MOCK: cashDom("${selectorString}").append() called.`);
                 if (elements.length > 0) {
-                    // Append to the first element found by the original selector/element
-                    console.log(`SFMC MOCK: Appending to first element:`, elements[0]);
                     elements[0].insertAdjacentHTML('beforeend', htmlString);
                 } else {
-                    console.warn(`SFMC MOCK: cashDom("${selectorString}").append(): No elements found initially to append to.`);
+                    console.warn(`SFMC MOCK: cashDom("${selectorString}").append(): No elements found to append to.`);
                 }
             },
 
+            /** Removes all elements in the collection from the DOM. */
             remove: () => {
-                console.log(`SFMC MOCK: cashDom("${selectorString}").remove() called. Found ${elements.length} element(s) to remove.`);
                 if (elements.length > 0) {
-                    elements.forEach((el, index) => {
-                        console.log(`SFMC MOCK: Removing element ${index} [${selectorString}]:`, el);
-                        el.remove();
-                    });
-                    console.log(`SFMC MOCK: Finished removing elements for "${selectorString}".`);
-                    // Verification log (optional but useful)
-                    // const elementsAfterRemove = typeof selector === 'string' ? Array.from(document.querySelectorAll(selector)) : [];
-                    // console.log(`SFMC MOCK: Verification - Elements found immediately after remove call: ${elementsAfterRemove.length}`);
+                    elements.forEach(el => el.remove());
                 } else {
-                    console.warn(`SFMC MOCK: cashDom("${selectorString}").remove(): No elements found initially to remove.`);
+                    console.warn(`SFMC MOCK: cashDom("${selectorString}").remove(): No elements found to remove.`);
                 }
             },
 
-            // *** ADD THE .html() METHOD ***
-            html: (htmlString: string): void => { // Typically takes HTML string, returns void or 'this' for chaining
-                console.log(`SFMC MOCK: cashDom("${selectorString}").html() called.`);
-
+            /** Sets the innerHTML of the first element in the collection. */
+            html: (htmlString: string): void => {
                 if (elements.length > 0) {
-                    console.log(`SFMC MOCK: Setting innerHTML for ${elements.length} element(s) found for "${selectorString}".`);
-                    // Usually, html() replaces content only on the FIRST element in cash-dom/jQuery
-                    // Adjust if SFMC's cashDom behaves differently
-                    console.log(`SFMC MOCK: Setting innerHTML for first element:`, elements[0]);
-                    elements[0].innerHTML = htmlString; // Set innerHTML on the first element
+                    // Standard behavior is to affect only the first element
+                    elements[0].innerHTML = htmlString;
                 } else {
-                    // Log a warning if no elements were found initially by cashDom
-                    console.warn(`SFMC MOCK: cashDom("${selectorString}").html(): No elements found initially to set HTML for.`);
+                    console.warn(`SFMC MOCK: cashDom("${selectorString}").html(): No elements found to set HTML for.`);
                 }
-                // Note: Return 'this' (the object itself) if chaining is needed, e.g., .html(...).addClass(...)
-                // return this;
             }
+            // Add other cashDom methods here if needed (e.g., .addClass, .attr, etc.)
         };
     };
 
     /**
-     * Mock for SalesforceInteractions.DisplayUtils.pageElementLoaded
-     * Returns a Promise that resolves with the TARGET SELECTOR STRING when the element is found.
+     * Mock for SalesforceInteractions.DisplayUtils.pageElementLoaded.
+     * Returns a Promise that resolves with the *target selector string* when the element is found.
+     * @param targetSelector - The CSS selector for the element to wait for.
+     * @param observerSelector - Optional CSS selector for a container element to observe mutations within. Defaults to document.body.
      */
     const mockPageElementLoaded = (
         targetSelector: string,
         observerSelector?: string
     ): Promise<string> => {
-        // Basic validation (remains the same)
+        // --- Input Validation ---
         if (!targetSelector || typeof targetSelector !== 'string') {
-            console.error("SFMC MOCK: DisplayUtils.pageElementLoaded: targetSelector is required and must be a string.");
-            return Promise.reject(new Error("Invalid targetSelector provided to pageElementLoaded mock."));
+            const errorMsg = "SFMC MOCK: DisplayUtils.pageElementLoaded: targetSelector is required and must be a string.";
+            console.error(errorMsg);
+            return Promise.reject(new Error(errorMsg)); // Reject promise on invalid input
         }
         if (observerSelector && typeof observerSelector !== 'string') {
             console.warn("SFMC MOCK: DisplayUtils.pageElementLoaded: observerSelector provided but is not a string. Ignoring it.");
-            observerSelector = undefined;
+            observerSelector = undefined; // Clear invalid observer selector
         }
 
-        return new Promise((resolve, reject) => {
-            console.log(`SFMC MOCK: DisplayUtils.pageElementLoaded searching for "${targetSelector}"...`);
-
+        // --- Promise Logic ---
+        return new Promise((resolve) => {
             // 1. Check if the element already exists
             const existingElement = document.querySelector(targetSelector);
             if (existingElement) {
-                console.log(`SFMC MOCK: DisplayUtils.pageElementLoaded found "${targetSelector}" immediately. Resolving with SELECTOR.`);
-                resolve(targetSelector);
-                return; // Promise resolved
+                resolve(targetSelector); // Resolve immediately with the selector string
+                return;
             }
 
             // 2. If not found, set up a MutationObserver
-            console.log(`SFMC MOCK: DisplayUtils.pageElementLoaded: Element "${targetSelector}" not present. Setting up observer.`);
-
             const observerCallback = (mutationsList: MutationRecord[], observer: MutationObserver) => {
-                const foundElement = document.querySelector(targetSelector);
-                if (foundElement) {
-                    console.log(`SFMC MOCK: DisplayUtils.pageElementLoaded found "${targetSelector}" after DOM mutation. Resolving with SELECTOR.`);
+                // Check if the target element exists *anywhere* in the document now
+                if (document.querySelector(targetSelector)) {
                     observer.disconnect(); // Stop observing once found
                     resolve(targetSelector);  // Resolve the promise with the selector string
                 }
@@ -126,79 +108,78 @@ export function setupMockSalesforceInteractions() {
 
             const observer = new MutationObserver(observerCallback);
 
-            // Determine the node to observe (remains the same)
-            let observerNode: Node | null = null;
+            // Determine the node to observe
+            let observerNode: Node = document.body; // Default to body
             if (observerSelector) {
-                observerNode = document.querySelector(observerSelector);
-                if (!observerNode) {
-                    console.warn(`SFMC MOCK: DisplayUtils.pageElementLoaded: observerSelector "${observerSelector}" not found. Falling back to observing document.body.`);
-                    observerNode = document.body;
+                const specificNode = document.querySelector(observerSelector);
+                if (specificNode) {
+                    observerNode = specificNode;
                 } else {
-                    console.log(`SFMC MOCK: DisplayUtils.pageElementLoaded observing within specific element:`, observerNode);
+                    console.warn(`SFMC MOCK: DisplayUtils.pageElementLoaded: observerSelector "${observerSelector}" not found. Falling back to observing document.body.`);
+                    // Keep observerNode as document.body
                 }
-            } else {
-                observerNode = document.body;
-                console.log(`SFMC MOCK: DisplayUtils.pageElementLoaded observing document.body.`);
             }
 
+            // Configuration for the observer (observe additions/removals in the subtree)
             const config: MutationObserverInit = { childList: true, subtree: true };
             observer.observe(observerNode, config);
-            console.log(`SFMC MOCK: Observer started on`, observerNode);
         });
     };
 
 
+    /** Mock DisplayUtils object */
     const mockDisplayUtils = {
         unbind: (bindId: string) => {
-            console.log(`Mock SalesforceInteractions.DisplayUtils.unbind("${bindId}")`);
+            // console.log(`SFMC MOCK: DisplayUtils.unbind("${bindId}") called.`); // Keep commented for potential debugging
         },
         pageElementLoaded: mockPageElementLoaded,
     };
 
+    /** Mock sendEvent function */
     const mockSendEvent = (eventPayload: any) => {
-        console.log('Mock SalesforceInteractions.sendEvent called with:', eventPayload);
+        // console.log('SFMC MOCK: sendEvent called with:', eventPayload); // Keep commented for potential debugging
     };
 
+    /** Mock buildBindId function */
     const mockBuildBindId = (context: any) => {
-        console.log('Mock buildBindId called with context:', context);
-        const mockId = `mock-bind-id::${context?.campaign?.experienceId ?? 'unknown'}`;
-        console.log(`Mock buildBindId returning: "${mockId}"`);
+        // Simple mock ID generation, mimicking potential real-world structure
+        const experienceId = context?.campaign?.experienceId ?? 'unknown_experience';
+        const mockId = `mock-bind-id::${experienceId}`;
+        // console.log(`SFMC MOCK: buildBindId called, returning: "${mockId}"`, context); // Keep commented for potential debugging
         return mockId;
     };
 
-    // --- Assign to Window ---
+    // --- Assign Mocks to Window ---
 
     (window as any).SalesforceInteractions = {
         cashDom: mockCashDom,
         sendEvent: mockSendEvent,
         DisplayUtils: mockDisplayUtils,
-        getContentZoneSelector: (zoneSelector: string) => {
-            return zoneSelector; // Return a default selector
-        }
+        // Mock basic getContentZoneSelector behavior - usually just returns the input
+        getContentZoneSelector: (zoneSelector: string) => zoneSelector,
     };
 
     (window as any).buildBindId = mockBuildBindId;
 
-    // console.log('Mock SalesforceInteractions setup complete.');
-}
+} // *** End of setupMockSalesforceInteractions ***
+
 
 /**
  * Cleans up the mock objects from the window global scope.
  */
 export function cleanupMockSalesforceInteractions() {
-    // console.log('Cleaning up mock SalesforceInteractions from window...');
-    let cleaned = false;
+    let foundMocks = false;
     if ((window as any).SalesforceInteractions) {
         delete (window as any).SalesforceInteractions;
-        cleaned = true;
+        foundMocks = true;
     }
     if ((window as any).buildBindId) {
         delete (window as any).buildBindId;
-        cleaned = true;
+        foundMocks = true;
     }
-    if (cleaned) {
-        console.log('Mock SalesforceInteractions cleanup complete.');
-    } else {
-        console.log('No mock SalesforceInteractions found on window to clean up.');
+
+    if (!foundMocks) {
+        // Log only if cleanup was called but nothing was found (might indicate an issue or just expected state)
+        console.log('SFMC MOCK: No mock SalesforceInteractions found on window to clean up.');
     }
 }
