@@ -40,7 +40,10 @@ declare interface CampaignTemplateComponent {
  * The return type 'PropertyDecorator' is a built-in TS type.
  */
 declare function title(label: string): PropertyDecorator;
+declare function subtitle(label: string): PropertyDecorator;
 declare function richText(enabled: boolean): PropertyDecorator;
+declare function header(label: string): PropertyDecorator;
+declare function shownIf(component: CampaignTemplateComponent, condition: boolean): PropertyDecorator;
 
 // Add declarations for any other SFMC decorators you might use (e.g., @options, @header)
 // declare function options(...args: any[]): PropertyDecorator;
